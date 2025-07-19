@@ -48,6 +48,7 @@
     <input id="loginName" type="text" placeholder="Tên hiển thị" style="margin:8px;padding:8px;width:220px;">
     <button id="btnLogin" style="margin:8px;padding:8px 24px;">Đăng nhập</button>
     <button id="btnRegister" style="margin:8px;padding:8px 24px;">Đăng ký</button>
+    <button id="btnAnon" style="margin:8px;padding:8px 24px;background:#444;color:#fff;">Đăng nhập ẩn danh</button>
     <div id="loginError" style="color:#e0245e;margin-top:8px;"></div>
   </div>
 
@@ -126,6 +127,18 @@ $(function() {
     }).fail(function(xhr) {
       $('#loginError').css('color','#e0245e').text(xhr.responseJSON?.error||'Lỗi đăng nhập');
     });
+  });
+
+  // ====== Đăng nhập ẩn danh ======
+  $('#btnAnon').click(function() {
+    // Tạo tên và email ngẫu nhiên
+    const rand = Math.floor(Math.random()*9000)+1000;
+    user = {
+      email: `anon${rand}@protriox.dev`,
+      name: `Anonymous${rand}`
+    };
+    connectSocket();
+    showMain();
   });
 
   // ====== Kết nối Socket.io ======
