@@ -49,4 +49,4 @@ ProTriox là dự án lớp học online mô phỏng Zoom/Google Meet, xây dự
 
 ---
 
-> **Tác giả:** [Quang]] – 2025 #
+> **Tác giả:** [Quang] – 2025 #
