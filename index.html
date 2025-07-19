@@ -3,87 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <title>ProTriox – Lớp học online như Zoom/Meet</title>
-  <!-- Google Fonts: Inter -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script> <!-- Thư viện Socket.io client -->
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'Inter',sans-serif;background:#111;color:#f3f3f3;height:100vh;display:flex;flex-direction:column;overflow:hidden}
-    header{flex:0 0 56px;background:#0a0a0a;display:flex;align-items:center;justify-content:space-between;padding:0 1rem}
-    .logo{font-weight:600;font-size:1.2rem;color:#fff}
-    .meeting-id{font-size:.9rem;color:#aaa}
-    main{flex:1;display:flex}
-    .video-grid{flex:1;display:grid;gap:6px;padding:6px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .video-tile{background:#000;border-radius:8px;position:relative;overflow:hidden;aspect-ratio:16/9}
-    .video-tile video{width:100%;height:100%;object-fit:cover}
-    .video-tile .label{position:absolute;bottom:6px;left:6px;background:#0008;color:#fff;padding:2px 6px;border-radius:4px;font-size:.75rem}
-    aside{flex:0 0 260px;background:#1a1a1a;border-left:1px solid #333;display:flex;flex-direction:column}
-    .tabs{display:flex;border-bottom:1px solid #333}
-    .tab{flex:1;text-align:center;padding:.75rem 0;cursor:pointer;font-size:.8rem;font-weight:500;color:#aaa;transition:.2s}
-    .tab.active{background:#222;color:#fff}
-    .tab-content{flex:1;padding:.75rem;font-size:.8rem;display:none;overflow-y:auto}
-    .participant-item,.chat-item{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem}
-    .participant-item img,.chat-item img{width:24px;height:24px;border-radius:50%}
-    .chat-item{flex-direction:column;align-items:flex-start}
-    .chat-meta{font-size:.7rem;color:#888}
-    .chat-msg{background:#222;padding:.4rem .6rem;border-radius:4px;margin-top:.2rem;max-width:90%;word-break:break-word}
-    .chat-input{display:flex;border-top:1px solid #333;padding:.5rem}
-    .chat-input input{flex:1;background:#111;border:1px solid #333;border-radius:4px;padding:.4rem;color:#fff;font-family:inherit}
-    .chat-input button{background:#0a84ff;border:none;border-radius:4px;color:#fff;padding:.4rem .6rem;margin-left:.4rem;cursor:pointer}
-    footer{flex:0 0 72px;background:#0a0a0a;border-top:1px solid #333;display:flex;align-items:center;justify-content:center;gap:1rem}
-    .ctrl-btn{width:48px;height:48px;border-radius:50%;border:none;background:#333;color:#fff;cursor:pointer;display:grid;place-items:center;transition:.2s}
-    .ctrl-btn:hover{background:#444}
-    .ctrl-btn.danger{background:#e0245e}
-    .ctrl-btn.on{background:#0a84ff}
-    @media(max-width:768px){aside{display:none}.video-grid{grid-template-columns:1fr 1fr}}
-  </style>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   <!-- Trang login -->
-  <div id="loginPage" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;">
+  <div id="loginPage" class="centered">
     <h2>Đăng nhập ProTriox</h2>
-    <input id="loginEmail" type="email" placeholder="Email" style="margin:8px;padding:8px;width:220px;">
-    <input id="loginPassword" type="password" placeholder="Mật khẩu" style="margin:8px;padding:8px;width:220px;">
-    <input id="loginName" type="text" placeholder="Tên hiển thị" style="margin:8px;padding:8px;width:220px;">
-    <button id="btnLogin" style="margin:8px;padding:8px 24px;">Đăng nhập</button>
-    <button id="btnRegister" style="margin:8px;padding:8px 24px;">Đăng ký</button>
-    <button id="btnAnon" style="margin:8px;padding:8px 24px;background:#444;color:#fff;">Đăng nhập ẩn danh</button>
-    <div id="loginError" style="color:#e0245e;margin-top:8px;"></div>
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Mật khẩu">
+    <input id="loginName" type="text" placeholder="Tên hiển thị">
+    <input id="roomName" type="text" placeholder="Tên phòng/lớp (vd: math12A)">
+    <select id="roomLimit">
+      <option value="5">5 người</option>
+      <option value="10">10 người</option>
+      <option value="20">20 người</option>
+      <option value="50">50 người</option>
+      <option value="100">100 người</option>
+      <option value="200">200 người</option>
+    </select>
+    <button id="btnLogin">Đăng nhập</button>
+    <button id="btnRegister">Đăng ký</button>
+    <button id="btnAnon">Đăng nhập ẩn danh</button>
+    <div id="loginError"></div>
   </div>
 
   <!-- Nội dung chính (main) -->
   <div id="mainPage" style="display:none;flex-direction:column;height:100vh;">
-    <!-- Thanh trên cùng (header) -->
     <header>
       <div class="logo">ProTriox</div>
       <div class="meeting-id">Phòng học · <span id="meetId"></span></div>
     </header>
-
-    <!-- Lưới video (video grid) -->
-    <section class="video-grid" id="videoGrid"></section>
-
-    <!-- Sidebar bên phải (aside) -->
-    <aside>
-      <nav class="tabs">
-        <div class="tab active" data-panel="participants">Thành viên</div>
-        <div class="tab" data-panel="chat">Chat</div>
-      </nav>
-      <section class="tab-content" id="participants">
-        <div class="participant-item"><img src="https://i.pravatar.cc/100?a=1"> Bạn (Host)</div>
-        <div class="participant-item"><img src="https://i.pravatar.cc/100?a=2"> Alice</div>
-        <div class="participant-item"><img src="https://i.pravatar.cc/100?a=3"> Bob</div>
-      </section>
-      <section class="tab-content" id="chat">
-        <div id="chatMessages"></div>
-        <div class="chat-input">
-          <input id="chatBox" placeholder="Nhập tin nhắn…" maxlength="200" />
-          <button id="sendBtn">Gửi</button>
-        </div>
-      </section>
-    </aside>
-
-    <!-- Thanh điều khiển dưới cùng (footer) -->
+    <main>
+      <section class="video-grid" id="videoGrid"></section>
+      <aside>
+        <nav class="tabs">
+          <div class="tab active" data-panel="participants">Thành viên</div>
+          <div class="tab" data-panel="chat">Chat</div>
+        </nav>
+        <section class="tab-content" id="participants"></section>
+        <section class="tab-content" id="chat">
+          <div id="chatMessages"></div>
+          <div class="chat-input">
+            <input id="chatBox" placeholder="Nhập tin nhắn…" maxlength="200" />
+            <button id="sendBtn">Gửi</button>
+          </div>
+        </section>
+      </aside>
+    </main>
     <footer>
       <button class="ctrl-btn" id="btnMic" title="Bật/tắt mic">🎤</button>
       <button class="ctrl-btn" id="btnCam" title="Bật/tắt camera">📹</button>
@@ -91,131 +61,5 @@
       <button class="ctrl-btn danger" id="btnLeave" title="Rời phòng">📞</button>
     </footer>
   </div>
-
-<script>
-$(function() {
-  // ====== Biến toàn cục ======
-  let socket, user = {}, room = 'protriox-demo';
-
-  // ====== Hàm show/hide page ======
-  function showLogin() { $('#loginPage').show(); $('#mainPage').hide(); }
-  function showMain() { $('#loginPage').hide(); $('#mainPage').show(); }
-
-  // ====== Đăng ký tài khoản ======
-  $('#btnRegister').click(function() {
-    const email = $('#loginEmail').val().trim();
-    const password = $('#loginPassword').val().trim();
-    const name = $('#loginName').val().trim();
-    if (!email || !password || !name) return $('#loginError').text('Vui lòng nhập đủ thông tin!');
-    $.post('/api/register', { email, password, name }, function(res) {
-      $('#loginError').css('color','#0a84ff').text('Đăng ký thành công! Đăng nhập ngay.');
-    }).fail(function(xhr) {
-      $('#loginError').css('color','#e0245e').text(xhr.responseJSON?.error||'Lỗi đăng ký');
-    });
-  });
-
-  // ====== Đăng nhập ======
-  $('#btnLogin').click(function() {
-    const email = $('#loginEmail').val().trim();
-    const password = $('#loginPassword').val().trim();
-    const name = $('#loginName').val().trim();
-    if (!email || !password || !name) return $('#loginError').text('Vui lòng nhập đủ thông tin!');
-    $.post('/api/login', { email, password }, function(res) {
-      user = { email, name };
-      connectSocket();
-      showMain();
-    }).fail(function(xhr) {
-      $('#loginError').css('color','#e0245e').text(xhr.responseJSON?.error||'Lỗi đăng nhập');
-    });
-  });
-
-  // ====== Đăng nhập ẩn danh ======
-  $('#btnAnon').click(function() {
-    // Tạo tên và email ngẫu nhiên
-    const rand = Math.floor(Math.random()*9000)+1000;
-    user = {
-      email: `anon${rand}@protriox.dev`,
-      name: `Anonymous${rand}`
-    };
-    connectSocket();
-    showMain();
-  });
-
-  // ====== Kết nối Socket.io ======
-  function connectSocket() {
-    socket = io();
-    // Khi join phòng
-    socket.emit('join', { email: user.email, name: user.name, room });
-    // Nhận danh sách user thật
-    socket.on('users', function(users) {
-      $('#participants').html(users.map(u => `<div class='participant-item'><img src='https://i.pravatar.cc/100?u=${u.email}'> ${u.name}${u.email===user.email?' (Bạn)':''}</div>`).join(''));
-    });
-    // Nhận chat realtime
-    socket.on('chat', function(msg) {
-      $('#chatMessages').append(`
-        <div class="chat-item">
-          <img src="https://i.pravatar.cc/100?u=${msg.name}">
-          <div class="chat-meta">${msg.name} · ${msg.time}</div>
-          <div class="chat-msg">${msg.text}</div>
-        </div>`);
-      $('#chatMessages').scrollTop($('#chatMessages')[0].scrollHeight);
-    });
-  }
-
-  // ====== Gửi chat ======
-  $('#sendBtn').click(function() {
-    const text = $('#chatBox').val().trim();
-    if (text && socket) {
-      socket.emit('chat', { room, name: user.name, text });
-      $('#chatBox').val('');
-    }
-  });
-  $('#chatBox').keydown(function(e) { if (e.key==='Enter') $('#sendBtn').click(); });
-
-  // ====== Chuyển tab sidebar ======
-  $('.tab').click(function() {
-    $('.tab').removeClass('active');
-    $('.tab-content').hide();
-    $(this).addClass('active');
-    $('#' + $(this).data('panel')).show();
-  });
-  $('#participants').show();
-
-  // ====== Điều khiển mic/cam/share (giữ nguyên logic cũ) ======
-  let micOn = true, camOn = true;
-  $('#btnMic').click(function() {
-    micOn = !micOn;
-    if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = micOn);
-    $(this).toggleClass('on', micOn);
-  });
-  $('#btnCam').click(function() {
-    camOn = !camOn;
-    if (localStream) localStream.getVideoTracks().forEach(t => t.enabled = camOn);
-    $(this).toggleClass('on', camOn);
-  });
-  $('#btnShare').click(async function() {
-    if (screenStream) { // Dừng chia sẻ
-      screenStream.getTracks().forEach(t => t.stop());
-      screenStream = null;
-      $(this).removeClass('on');
-      return;
-    }
-    try {
-      screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      createTile(screenStream, 'Screen');
-      $(this).addClass('on');
-      screenStream.getVideoTracks()[0].onended = () => $('#btnShare').click();
-    } catch(e) {
-      alert('Từ chối chia sẻ màn hình');
-    }
-  });
-
-  // ====== Rời phòng ======
-  $('#btnLeave').click(function() {
-    if (socket) socket.disconnect();
-    showLogin();
-  });
-});
-</script>
 </body>
 </html> 

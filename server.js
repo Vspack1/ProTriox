@@ -40,14 +40,17 @@ app.post('/api/login', (req, res) => {
 // Socket.io realtime
 io.on('connection', (socket) => {
   // Khi user join phòng
-  socket.on('join', ({ email, name, room }) => {
-    users[socket.id] = { email, name, room };
+  socket.on('join', ({ email, name, room, roomLimit }) => {
     if (!rooms[room]) rooms[room] = [];
+    // Giới hạn số lượng user trong phòng
+    if (rooms[room].length >= (roomLimit || 10)) {
+      socket.emit('room_full');
+      return;
+    }
+    users[socket.id] = { email, name, room };
     rooms[room].push({ socketId: socket.id, email, name });
-    // Broadcast danh sách user mới cho cả phòng
     io.to(room).emit('users', rooms[room]);
     socket.join(room);
-    // Thông báo user mới join
     socket.to(room).emit('chat', { name: 'System', text: `${name} đã tham gia phòng!`, time: new Date().toLocaleTimeString() });
   });
 

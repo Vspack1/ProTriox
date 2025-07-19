@@ -1,38 +1,55 @@
 # ProTriox – Website học online realtime (Node.js + Socket.io)
 
 ## 📝 Giới thiệu
-ProTriox là dự án lớp học online mô phỏng Zoom/Google Meet, xây dựng bằng HTML, CSS, JavaScript, jQuery và Node.js + Socket.io. Hỗ trợ đăng nhập email/password, chat, danh sách người tham gia realtime.
+ProTriox là dự án lớp học online mô phỏng Zoom/Google Meet, xây dựng bằng HTML, CSS, JavaScript, jQuery và Node.js + Socket.io. Hỗ trợ đăng nhập email/password hoặc ẩn danh, tạo/join phòng học với tên và số lượng tùy chọn, chat, danh sách người tham gia realtime, responsive UI.
 
 ---
 
-## 🚀 Hướng dẫn chạy local
-1. Cài Node.js (>=16)
-2. Cài dependencies:
+## 🚀 Cấu trúc file
+```
+ProTriox/
+├── index.html      # Giao diện chính, chỉ chứa HTML
+├── style.css       # Toàn bộ CSS, responsive, mobile friendly
+├── script.js       # Toàn bộ logic JS/jQuery
+├── server.js       # Node.js + Express + Socket.io backend
+├── package.json    # Thông tin project, dependencies
+└── README.md       # Hướng dẫn sử dụng
+```
+
+---
+
+## 🌟 Tính năng mới
+- Không còn user giả lập (Alice, Bob)
+- Tạo phòng/lớp với tên tùy ý, chọn số lượng tối đa (5–200)
+- Join phòng bằng email/password hoặc ẩn danh
+- Responsive UI cho mobile/tablet/desktop
+- Danh sách thành viên và chat realtime chỉ hiển thị user thật
+- Giới hạn số lượng user trong phòng
+
+---
+
+## 🚀 Hướng dẫn sử dụng
+1. **Chạy local:**
    ```bash
    cd ProTriox
-   npm install express socket.io cors
-   ```
-3. Chạy server:
-   ```bash
+   npm install
    node server.js
    ```
-4. Mở trình duyệt: http://localhost:3000/index.html
+   Truy cập: http://localhost:3000/index.html
+2. **Deploy Render:**
+   - Đảm bảo repo có đủ file như trên
+   - Root Directory: ProTriox (nếu code nằm trong thư mục này)
+   - Build Command: npm install
+   - Start Command: npm start
+   - Truy cập link public sau khi deploy
 
 ---
 
-## 🌐 Deploy lên Render/Railway
-- Tạo tài khoản [Render](https://render.com/) hoặc [Railway](https://railway.app/)
-- Tạo project mới, upload toàn bộ thư mục ProTriox
-- Chọn file start là `server.js`
-- Sau khi deploy, truy cập link public để sử dụng
-
----
-
-## 🔑 Đăng nhập & sử dụng
-- Đăng ký tài khoản (email, password, tên)
-- Đăng nhập để vào phòng học
-- Danh sách người tham gia và chat realtime giữa các user thật
-- Có thể mở nhiều tab/trình duyệt để test nhiều user
+## 🔑 Đăng nhập & tạo phòng
+- Nhập email, password, tên, **tên phòng/lớp** (vd: math12A), **số lượng tối đa** (5–200)
+- Hoặc bấm "Đăng nhập ẩn danh" để test nhanh
+- Nếu phòng chưa tồn tại sẽ tự tạo mới, nếu đã đủ số lượng sẽ báo lỗi
+- Có thể mở nhiều tab, tạo/join nhiều phòng khác nhau để test
 
 ---
 
@@ -49,4 +66,4 @@ ProTriox là dự án lớp học online mô phỏng Zoom/Google Meet, xây dự
 
 ---
 
-> **Tác giả:** [Quang] – 2025 #
+> **Tác giả:** [Quang] – 2025

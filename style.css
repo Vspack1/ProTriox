@@ -1,0 +1,196 @@
+/* ProTriox style.css - CSS cho giao diện lớp học online */
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #111;
+  color: #f3f3f3;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 10px;
+}
+header {
+  flex: 0 0 56px;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+.logo {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #fff;
+}
+.meeting-id {
+  font-size: .9rem;
+  color: #aaa;
+}
+main {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.video-grid {
+  flex: 1;
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-content: start;
+}
+.video-tile {
+  background: #000;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+}
+.video-tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video-tile .label {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  background: #0008;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: .75rem;
+}
+aside {
+  flex: 0 0 260px;
+  background: #1a1a1a;
+  border-left: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  min-width: 180px;
+}
+.tabs {
+  display: flex;
+  border-bottom: 1px solid #333;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: .75rem 0;
+  cursor: pointer;
+  font-size: .8rem;
+  font-weight: 500;
+  color: #aaa;
+  transition: .2s;
+}
+.tab.active {
+  background: #222;
+  color: #fff;
+}
+.tab-content {
+  flex: 1;
+  padding: .75rem;
+  font-size: .8rem;
+  display: none;
+  overflow-y: auto;
+}
+.participant-item, .chat-item {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .5rem;
+}
+.participant-item img, .chat-item img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+.chat-item {
+  flex-direction: column;
+  align-items: flex-start;
+}
+.chat-meta {
+  font-size: .7rem;
+  color: #888;
+}
+.chat-msg {
+  background: #222;
+  padding: .4rem .6rem;
+  border-radius: 4px;
+  margin-top: .2rem;
+  max-width: 90%;
+  word-break: break-word;
+}
+.chat-input {
+  display: flex;
+  border-top: 1px solid #333;
+  padding: .5rem;
+}
+.chat-input input {
+  flex: 1;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  padding: .4rem;
+  color: #fff;
+  font-family: inherit;
+}
+.chat-input button {
+  background: #0a84ff;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  padding: .4rem .6rem;
+  margin-left: .4rem;
+  cursor: pointer;
+}
+footer {
+  flex: 0 0 72px;
+  background: #0a0a0a;
+  border-top: 1px solid #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+.ctrl-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #333;
+  color: #fff;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: .2s;
+}
+.ctrl-btn:hover {
+  background: #444;
+}
+.ctrl-btn.danger {
+  background: #e0245e;
+}
+.ctrl-btn.on {
+  background: #0a84ff;
+}
+@media (max-width: 900px) {
+  aside { min-width: 120px; flex: 0 0 120px; }
+  .video-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  aside { display: none; }
+  .video-grid { grid-template-columns: 1fr; }
+  header, footer { flex-direction: column; height: auto; }
+  .centered { padding: 1rem; }
+}
+/* Giải thích: Sử dụng grid/flexbox để responsive, ẩn sidebar trên mobile, tự động co giãn giao diện */ 
