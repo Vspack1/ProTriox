@@ -67,6 +67,10 @@ io.on('connection', (socket) => {
       io.to(user.room).emit('users', rooms[user.room]);
       socket.to(user.room).emit('chat', { name: 'System', text: `${user.name} đã rời phòng!`, time: new Date().toLocaleTimeString() });
       delete users[socket.id];
+      // Nếu phòng không còn ai, xóa phòng khỏi rooms
+      if (rooms[user.room].length === 0) {
+        delete rooms[user.room];
+      }
     }
   });
 });
